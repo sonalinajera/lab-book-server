@@ -1,4 +1,4 @@
-const LabBookService = {
+const experimentsService = {
   //might need to add a way to only pulled logged in info
   getAllExperiments(db) {
     return db('experiments')
@@ -12,4 +12,4 @@ const LabBookService = {
   }
 };
 
-module.exports = LabBookService;
+module.exports = experimentsService;

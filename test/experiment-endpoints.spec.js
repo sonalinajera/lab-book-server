@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
 const supertest = require('supertest');
-const { seedUsers, makeUsersArray, makeExperimentsArray } = require('./test-helpers');
+const { makeUsersArray, makeExperimentsArray } = require('./test-helpers');
 
 describe('LAB BOOK endpoints', () => {
   let db;
@@ -59,7 +59,7 @@ describe('LAB BOOK endpoints', () => {
 
   });
 
-  describe.only(`GET /api/experiments/:experiment_id`, () => {
+  describe(`GET /api/experiments/:experiment_id`, () => {
 
     context('Given no experiments', () => {
 
