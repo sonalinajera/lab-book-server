@@ -1,5 +1,3 @@
-const experimentsRouter = require("../src/experiments/experimentsRouter");
-
 function makeUsersArray() {
   return [
     {
@@ -75,7 +73,7 @@ function seedUsers(db, users) {
 function seedAllTables (db) {
   return seedUsers(db, makeUsersArray())
     .then(() => {
-      db.into('experiments')
+      return db.into('experiments')
         .insert(makeExperimentsArray());
     });
 

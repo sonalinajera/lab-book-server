@@ -3,6 +3,12 @@ const LabBookService = {
   getAllExperiments(db) {
     return db('experiments')
       .select('*');
+  },
+  getExperimentById(db, id) {
+    return db('experiments')
+      .select('*')
+      .where('id', id)
+      .first();
   }
 };
 
