@@ -4,7 +4,7 @@ const knex = require('knex');
 const supertest = require('supertest');
 const { seedUsers, makeUsersArray, makeExperimentsArray } = require('./test-helpers');
 
-describe('LAB BOOK endpoints', () => {
+describe('LAB BOOK EXPERIMENTS endpoints', () => {
   let db;
 
   before('establish connection', () => {
@@ -59,7 +59,7 @@ describe('LAB BOOK endpoints', () => {
 
   });
 
-  describe.only(`GET /api/experiments/:experiment_id`, () => {
+  describe(`GET /api/experiments/:experiment_id`, () => {
 
     context('Given no experiments', () => {
 
