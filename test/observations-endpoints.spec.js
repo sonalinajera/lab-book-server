@@ -26,7 +26,7 @@ describe('OBSERVATION ENDPOINTS', () => {
     return db.raw('TRUNCATE observations, variables, experiments, users RESTART IDENTITY CASCADE');
   });
 
-  describe.only('GET /api/experiments/:experiments_id/observations', () => {
+  describe('GET /api/experiments/:experiments_id/observations', () => {
 
     context('When there is no data in the database', () => {
       it('Responds with a 200 and an empty array', () => {
@@ -49,9 +49,10 @@ describe('OBSERVATION ENDPOINTS', () => {
             return db('variables').insert(makeVariablesArray());
           });
       });
+
       it('responds with 200 and only the experiments specific observations', () => {
         const experiment = makeExperimentsArray()[1];
-        const experimentId = experiment.id;  
+        const experimentId = experiment.id;
         const expectedObservations = [
           {
             id: 1,
@@ -67,7 +68,7 @@ describe('OBSERVATION ENDPOINTS', () => {
             date_created: '2020-06-10T08:34:13.000Z',
             experiment_id: 2
           }
-        ];    
+        ];
 
         return supertest(app)
           .get(`/api/experiments/${experimentId}/observations`)
@@ -75,6 +76,9 @@ describe('OBSERVATION ENDPOINTS', () => {
           .expect(expectedObservations);
 
       });
+
     });
   });
+
+  describe.skip(`GET /api/experiments/:experiment_id/observations/:observations_id`)
 });

@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
 const supertest = require('supertest');
-const { makeUsersArray, makeExperimentsArray } = require('./test-helpers');
+const { makeUsersArray, makeExperimentsArray, makeVariablesArray, makeObservationsArray } = require('./test-helpers');
 
 describe('LAB BOOK endpoints', () => {
   let db;
@@ -42,15 +42,21 @@ describe('LAB BOOK endpoints', () => {
         return db('users').insert(makeUsersArray())
           .then(() => {
             return db('experiments').insert(makeExperimentsArray());
+          })
+          .then(() => {
+            return db('variables').insert(makeVariablesArray());
+          })
+          .then(() => {
+            return db('observations').insert(makeObservationsArray());
           });
       });
       // needs to be for specific users only
-      it('responds with 200 and all of the experiments', () => {
+      it.only('responds with 200 and all of the experiments', () => {
         const expected = makeExperimentsArray();
         return supertest(app)
           .get('/api/experiments')
           .expect(200)
-          .expect(expected);
+          .then(res => console.log(res.body));
       });
 
       // need to do XSS
