@@ -67,8 +67,7 @@ describe('LAB BOOK endpoints', () => {
         const experiment_id = 2;
 
         return supertest(app)
-          .get(`/api/experiment/${experiment_id}`)
-          .expect(404)
+          .get(`/api/experiments/${experiment_id}`)
           .expect(404, { error: { message: 'Experiment does not exist' } });
       });
     });
@@ -84,8 +83,18 @@ describe('LAB BOOK endpoints', () => {
       it('responds with 404 when folder does not exist', () => {
         const experiment_id = 12345;
         return supertest(app)
-          .get(`/api/experiment/${experiment_id}`)
-          .expect(404);
+          .get(`/api/experiments/${experiment_id}`)
+          .expect(404, { error: { message: 'Experiment does not exist' } });
+      });
+
+      it('responds with 200 and the specified experiment', () => {
+        const expectedExperiment = makeExperimentsArray()[1];
+        const expectedExperimentId = expectedExperiment.id;
+  
+        return supertest(app)
+          .get(`/api/experiments/${expectedExperimentId}`)
+          .expect(200)
+          .expect(expectedExperiment);
       });
     });
   });
