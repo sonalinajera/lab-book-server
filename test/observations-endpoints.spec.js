@@ -36,7 +36,7 @@ describe('OBSERVATION ENDPOINTS', () => {
       });
     });
 
-    context('Where there is data in the database', () => {
+    context('When there is data in the database', () => {
       beforeEach('insert data', () => {
         return db('users').insert(makeUsersArray())
           .then(() => {
@@ -80,5 +80,28 @@ describe('OBSERVATION ENDPOINTS', () => {
     });
   });
 
-  describe.skip(`GET /api/experiments/:experiment_id/observations/:observations_id`)
+  describe(`GET /api/experiments/:experiment_id/observations/:observations_id`, () => {
+  
+    beforeEach('insert data', () => {
+      return db('users').insert(makeUsersArray())
+        .then(() => {
+          return db('experiments').insert(makeExperimentsArray());
+        })
+        .then(() => {
+          return db('observations').insert(makeObservationsArray());
+        })
+        .then(() => {
+          return db('variables').insert(makeVariablesArray());
+        });
+    });
+
+    context('When the observation does not exist', () => {
+      it(`Returns 404 and 'Observation does not exist'`, () => {
+        const testObservationId = 12345;
+        return supertest(app)
+          .get(`/api/experiments/2/observations/${testObservationId}`)
+          .expect(404, { error: { message: 'Observation does not exist'}});
+      });
+    });
+  });
 });

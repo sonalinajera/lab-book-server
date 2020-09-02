@@ -9,7 +9,7 @@ experimentsRouter
     ExperimentsService.getAllExperiments(req.app.get('db'))
       .then(experiments => {
         if(!experiments) {
-          return res.json([]);
+          return res.json(experiments);
         }
         return res.json(experiments);
       })

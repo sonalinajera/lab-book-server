@@ -7,6 +7,7 @@ const experimentsService = {
       .groupBy('experiments.id', 'observations.id')
       .leftOuterJoin('variables', 'experiments.id', '=', 'variables.experiment_id')
       .groupBy('experiments.id', 'variables.id')
+      .orderBy('experiments.id','asc');
   },
   getExperimentById(db, id) {
     return db('experiments')
