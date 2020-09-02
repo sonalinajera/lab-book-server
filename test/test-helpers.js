@@ -32,7 +32,7 @@ function makeExperimentsArray() {
     },
     {
       id: 2,
-      experiment_title: 'Pesticies and Bees',
+      experiment_title: 'Pesticides and Bees',
       hypothesis: 'Pesticides containing synthetic chemicals contribute to bee death', 
       date_created: '2020-03-19T08:34:13.000Z',
       user_id: 1
@@ -40,16 +40,63 @@ function makeExperimentsArray() {
     {
       id: 3,
       experiment_title: 'Air pollution and decrease plant oxygen production',
-      hypothesis: 'Air pollants aggregate on plant surface and decreases plant oxygen production', 
+      hypothesis: 'Air pollutants aggregate on plant surface and decreases plant oxygen production', 
       date_created: '2020-05-10T08:34:13.000Z',
       user_id: 2
     },
   ];
 }
 
-function makeVariablesArray() {}
+function makeVariablesArray() {
+  return [
+    {
+      id: 1,
+      variable_name: 'surface only vibrations',
+      experiment_id: 1
+    },
+    {
+      id: 2,
+      variable_name: 'using Synthecide',
+      experiment_id: 2
+    },
+    {
+      id: 3,
+      variable_name: 'manmade vibrations',
+      experiment_id: 1
+    },
+    {
+      id: 4,
+      variable_name: 'cleaning leaves',
+      experiment_id: 3
+    },
+  ];
+}
 
-function makeObservationsArray() {}
+function makeObservationsArray() {
+  return [
+    {
+      id: 1,
+      observation_title: 'Colony health',
+      observation_notes: `Colony's health is good, bees are active`, 
+      date_created: '2020-03-20T08:34:13.000Z',
+      experiment_id: 2
+    },
+    {
+      id: 2,
+      observation_title: 'Colony health',
+      observation_notes: 'After a month on pesticide, bees activities is low', 
+      date_created: '2020-06-10T08:34:13.000Z',
+      experiment_id: 2
+    },
+    {
+      id: 3,
+      observation_title: 'Cleaning leaves',
+      observation_notes: 'Air pollants aggregate on plant surface and decreases plant oxygen production, manually cleaning with cloth not enough', 
+      date_created: '2020-05-10T08:34:13.000Z',
+      experiment_id: 3
+    },
+  ];
+}
 
 function seedUsers(db, users) {
   return db.into('users').insert(users)

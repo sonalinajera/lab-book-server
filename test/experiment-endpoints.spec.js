@@ -2,9 +2,10 @@ require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
 const supertest = require('supertest');
-const { seedUsers, makeUsersArray, makeExperimentsArray } = require('./test-helpers');
+const { makeUsersArray, makeExperimentsArray, makeVariablesArray, makeObservationsArray } = require('./test-helpers');
+const { expect } = require('chai');
 
-describe('LAB BOOK EXPERIMENTS endpoints', () => {
+describe('EXPERIMENTS endpoints', () => {
   let db;
 
   before('establish connection', () => {
@@ -42,15 +43,27 @@ describe('LAB BOOK EXPERIMENTS endpoints', () => {
         return db('users').insert(makeUsersArray())
           .then(() => {
             return db('experiments').insert(makeExperimentsArray());
+          })
+          .then(() => {
+            return db('variables').insert(makeVariablesArray());
+          })
+          .then(() => {
+            return db('observations').insert(makeObservationsArray());
           });
       });
       // needs to be for specific users only
       it('responds with 200 and all of the experiments', () => {
-        const expected = makeExperimentsArray();
+        const expected = makeExperimentsArray()[0];
         return supertest(app)
           .get('/api/experiments')
           .expect(200)
-          .expect(expected);
+          .then(res => {
+            expect(res.body[0].id).to.eql(expected.id);
+            expect(res.body[0].experiment_title).to.eql(expected.experiment_title);
+            expect(res.body[0].hypothesis).to.eql(expected.hypothesis);
+            expect(res.body[0].user_id).to.eql(expected.user_id);
+            expect(res.body[0]).to.have.property('date_created');
+          });
       });
 
       // need to do XSS
