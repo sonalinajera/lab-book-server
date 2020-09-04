@@ -28,7 +28,7 @@ observationsRouter
             error: { message: 'Observation does not exist'}
           });
         }
-        return res.send('ok');
+        return res.send(observation);
       }).catch(next);
     
   });

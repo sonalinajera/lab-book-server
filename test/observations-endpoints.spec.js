@@ -103,5 +103,16 @@ describe('OBSERVATION ENDPOINTS', () => {
           .expect(404, { error: { message: 'Observation does not exist'}});
       });
     });
+
+    context.only(`When there's data in the database`, () => {
+      it(`Returns 200 and the observation`, () => {
+        const expectedObservation = makeObservationsArray()[0];
+        const observationId = 1;
+        return supertest(app)
+          .get(`/api/experiments/1/observations/${observationId}`)
+          .expect(200)
+          .then( res => console.log(res.body))
+      });
+    });
   });
 });
