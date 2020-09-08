@@ -3,6 +3,16 @@ const path = require('path');
 const experimentsRouter = express.Router();
 const ExperimentsService = require('./experimentsService');
 const jsonParser = express.json();
+const xss = require('xss');
+
+const serializeExperiment = experiment => ({
+  id: experiment.id,
+  experiment_title: xss(experiment.experiment_title), 
+  hypothesis: xss(experiment.hypothesis), 
+  user_id: parseInt(xss(experiment.user_id)),
+  variable_name: xss(experiment.variable_name),
+  date_created: experiment.date_created
+});
 
 experimentsRouter
   .route('/')
@@ -13,7 +23,7 @@ experimentsRouter
         if(!experiments) {
           return res.json(experiments);
         }
-        return res.json(experiments);
+        return res.json(experiments.map(serializeExperiment));
       })
       .catch(next);
   })
@@ -32,7 +42,7 @@ experimentsRouter
       .then(experiment => {
         return res.status(201)
           .location(path.posix.join(req.originalUrl, `/${experiment.id}`))
-          .json(experiment);
+          .json(serializeExperiment(experiment));
       })
       .catch(next);
   });
@@ -48,7 +58,7 @@ experimentsRouter
             error: { message: 'Experiment does not exist' } 
           });
         }
-        return res.json(experiment);
+        return res.json(serializeExperiment(experiment));
       })
       .catch(next);
   })

@@ -26,7 +26,7 @@ function makeExperimentsArray() {
     {
       id: 1,
       experiment_title: 'Effects of Vibrations on Ant Colonies',
-      hypothesis: 'Ants use vibrations to react to their environment', 
+      hypothesis: 'Ants use vibrations to react to their environment',
       date_created: '2020-08-23T08:34:13.000Z',
       variable_name: 'surface only vibrations',
       user_id: 1
@@ -34,7 +34,7 @@ function makeExperimentsArray() {
     {
       id: 2,
       experiment_title: 'Pesticides and Bees',
-      hypothesis: 'Pesticides containing synthetic chemicals contribute to bee death', 
+      hypothesis: 'Pesticides containing synthetic chemicals contribute to bee death',
       date_created: '2020-03-19T08:34:13.000Z',
       variable_name: 'using Synthecide',
       user_id: 1
@@ -42,7 +42,7 @@ function makeExperimentsArray() {
     {
       id: 3,
       experiment_title: 'Air pollution and decrease plant oxygen production',
-      hypothesis: 'Air pollutants aggregate on plant surface and decreases plant oxygen production', 
+      hypothesis: 'Air pollutants aggregate on plant surface and decreases plant oxygen production',
       date_created: '2020-05-10T08:34:13.000Z',
       variable_name: 'cleaning leaves',
       user_id: 2
@@ -80,21 +80,21 @@ function makeObservationsArray() {
     {
       id: 1,
       observation_title: 'Colony health',
-      observation_notes: `Colony's health is good, bees are active`, 
+      observation_notes: `Colony's health is good, bees are active`,
       date_created: '2020-03-20T08:34:13.000Z',
       experiment_id: 2
     },
     {
       id: 2,
       observation_title: 'Colony health',
-      observation_notes: 'After a month on pesticide, bees activities is low', 
+      observation_notes: 'After a month on pesticide, bees activities is low',
       date_created: '2020-06-10T08:34:13.000Z',
       experiment_id: 2
     },
     {
       id: 3,
       observation_title: 'Cleaning leaves',
-      observation_notes: 'Air pollants aggregate on plant surface and decreases plant oxygen production, manually cleaning with cloth not enough', 
+      observation_notes: 'Air pollants aggregate on plant surface and decreases plant oxygen production, manually cleaning with cloth not enough',
       date_created: '2020-05-10T08:34:13.000Z',
       experiment_id: 3
     },
@@ -103,11 +103,11 @@ function makeObservationsArray() {
 
 function seedUsers(db, users) {
   return db.into('users').insert(users)
-//     .then(() => 
-//       db.raw(
-//         `SELECT setval('lab-book_users_id_seq', ?)`,
-//         [users[users.length - 1].id]
-//       ));
+  //     .then(() => 
+  //       db.raw(
+  //         `SELECT setval('lab-book_users_id_seq', ?)`,
+  //         [users[users.length - 1].id]
+  //       ));
 }
 
 // function seedExperiments(db, experiments) {
@@ -120,7 +120,7 @@ function seedUsers(db, users) {
 //     });
 // }
 
-function seedAllTables (db) {
+function seedAllTables(db) {
   return seedUsers(db, makeUsersArray())
     .then(() => {
       return db.into('experiments')
@@ -128,11 +128,34 @@ function seedAllTables (db) {
     });
 
 }
+
+function makeMaliciousExperimentEntry() {
+  const maliciousExperiment = {
+    experiment_title: 'Fake title <script>alert("xss");</script>',
+    hypothesis: 'Fake hypothesis <script>alert("xss");</script>',
+    variable_name: 'Fake variable <script>alert("xss");</script>',
+    user_id: 1
+  };
+
+  const expectedExperiment = {
+    experiment_title: 'Fake title &lt;script&gt;alert("xss");&lt;/script&gt;',
+    hypothesis: 'Fake hypothesis &lt;script&gt;alert("xss");&lt;/script&gt;',
+    variable_name: 'Fake variable &lt;script&gt;alert("xss");&lt;/script&gt;',
+    user_id: 1
+  };
+
+  return {
+    maliciousExperiment,
+    expectedExperiment
+  };
+}
+
 module.exports = {
   makeUsersArray,
   makeExperimentsArray,
   makeVariablesArray,
   makeObservationsArray,
   seedUsers,
-  seedAllTables
+  seedAllTables,
+  makeMaliciousExperimentEntry
 };

@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
 const supertest = require('supertest');
-const { makeUsersArray, makeExperimentsArray, makeVariablesArray, makeObservationsArray } = require('./test-helpers');
+const { makeUsersArray, makeExperimentsArray, makeMaliciousExperimentEntry, makeObservationsArray } = require('./test-helpers');
 const { expect } = require('chai');
 
 
@@ -57,6 +57,7 @@ describe('EXPERIMENTS endpoints', () => {
           .get('/api/experiments')
           .expect(200)
           .then(res => {
+            console.log(res.body)
             expect(res.body[0].id).to.eql(expected.id);
             expect(res.body[0].experiment_title).to.eql(expected.experiment_title);
             expect(res.body[0].hypothesis).to.eql(expected.hypothesis);
@@ -65,8 +66,30 @@ describe('EXPERIMENTS endpoints', () => {
           });
       });
 
-      // need to do XSS
+    });
 
+    context('Given an XSS attack experiment', () => {
+      beforeEach('Insert users to database', () => {
+        return db('users').insert(makeUsersArray());
+      });
+
+      const { maliciousExperiment, expectedExperiment } = makeMaliciousExperimentEntry();
+
+      beforeEach('Insert malicious experiment entry', () => {
+        return db('experiments')
+          .insert(maliciousExperiment);
+      });
+
+      it('Removes XSS attack content', () => {
+        return supertest(app)
+          .get('/api/experiments')
+          .expect(200)
+          .expect(res => {
+            expect(res.body[0].experiment_title).to.eql(expectedExperiment.experiment_title);
+            expect(res.body[0].hypothesis).to.eql(expectedExperiment.hypothesis);
+            expect(res.body[0].variable_name).to.eql(expectedExperiment.variable_name);
+          });
+      });
     });
 
   });
@@ -149,6 +172,25 @@ describe('EXPERIMENTS endpoints', () => {
       });
     });
 
+    it('Removes malicious XSS attack before inserting', () => {
+      const { maliciousExperiment, expectedExperiment } = makeMaliciousExperimentEntry();
+
+      return supertest(app)
+        .post('/api/experiments/')
+        .send(maliciousExperiment)
+        .expect(201)
+        .expect(res => {
+          expect(res.body.experiment_title).to.eql(expectedExperiment.experiment_title);
+          expect(res.body.hypothesis).to.eql(expectedExperiment.hypothesis);
+          expect(res.body.variable_name).to.eql(expectedExperiment.variable_name);
+          expect(res.body.user_id).to.eql(expectedExperiment.user_id);
+        })
+        .then(res => 
+          supertest(app)
+            .get(`/api/experiments/${res.body.id}`)
+            .expect(res.body)
+        );
+    });
   });
 
   describe(`DELETE /api/experiments/:experiment_id`, () => {
@@ -175,7 +217,7 @@ describe('EXPERIMENTS endpoints', () => {
     it('should respond with 404 for an invalid id', () => {
       return supertest(app)
         .delete('/api/experiments/12334')
-        .expect(404, { error: { message: 'Experiment does not exist' }});
+        .expect(404, { error: { message: 'Experiment does not exist' } });
     });
 
   });
