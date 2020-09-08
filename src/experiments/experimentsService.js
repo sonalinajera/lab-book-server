@@ -7,8 +7,8 @@ const experimentsService = {
       .groupBy('experiments.id', 'users.id')
       // .leftOuterJoin('observations', 'experiments.id', '=', 'observations.experiment_id')
       // .groupBy('experiments.id', 'observations.id')
-      .leftOuterJoin('variables', 'experiments.id', '=', 'variables.experiment_id')
-      .groupBy('experiments.id', 'variables.id')
+      // .leftOuterJoin('variables', 'experiments.id', '=', 'variables.experiment_id')
+      // .groupBy('experiments.id', 'variables.id')
       .orderBy('experiments.id','asc');
   },
   getExperimentById(db, id) {
@@ -16,6 +16,21 @@ const experimentsService = {
       .select('*')
       .where('id', id)
       .first();
+  },
+
+  insertExperiment(db, newExperiment) {
+    return db('experiments')
+      .insert(newExperiment)
+      .returning('*')
+      .then(([experiment]) => experiment)
+      .then(experiment => 
+        experimentsService.getExperimentById(db, experiment.id)
+      );
+  },
+  deleteExperiment(db, id) {
+    return db('experiments')
+      .where('id', id)
+      .delete();
   }
 };
 

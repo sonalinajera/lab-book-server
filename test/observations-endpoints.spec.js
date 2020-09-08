@@ -4,6 +4,7 @@ const knex = require('knex');
 const supertest = require('supertest');
 const { makeUsersArray, makeExperimentsArray, makeObservationsArray, makeVariablesArray } = require('./test-helpers');
 const { expect } = require('chai');
+const observationsService = require('../src/observations/observationsService');
 
 describe('OBSERVATION ENDPOINTS', () => {
   let db;
@@ -19,11 +20,11 @@ describe('OBSERVATION ENDPOINTS', () => {
   after('destroy connection', () => db.destroy());
 
   before('Cleanup', () => {
-    return db.raw('TRUNCATE observations, variables, experiments, users RESTART IDENTITY CASCADE');
+    return db.raw('TRUNCATE observations, experiments, users RESTART IDENTITY CASCADE');
   });
 
   afterEach('Cleanup', () => {
-    return db.raw('TRUNCATE observations, variables, experiments, users RESTART IDENTITY CASCADE');
+    return db.raw('TRUNCATE observations, experiments, users RESTART IDENTITY CASCADE');
   });
 
   describe('GET /api/experiments/:experiments_id/observations', () => {
@@ -44,9 +45,6 @@ describe('OBSERVATION ENDPOINTS', () => {
           })
           .then(() => {
             return db('observations').insert(makeObservationsArray());
-          })
-          .then(() => {
-            return db('variables').insert(makeVariablesArray());
           });
       });
 
@@ -89,9 +87,6 @@ describe('OBSERVATION ENDPOINTS', () => {
         })
         .then(() => {
           return db('observations').insert(makeObservationsArray());
-        })
-        .then(() => {
-          return db('variables').insert(makeVariablesArray());
         });
     });
 
@@ -104,15 +99,125 @@ describe('OBSERVATION ENDPOINTS', () => {
       });
     });
 
-    context.only(`When there's data in the database`, () => {
+    context(`When there's data in the database`, () => {
       it(`Returns 200 and the observation`, () => {
         const expectedObservation = makeObservationsArray()[0];
         const observationId = 1;
         return supertest(app)
           .get(`/api/experiments/1/observations/${observationId}`)
           .expect(200)
-          .then( res => console.log(res.body))
+          .expect(expectedObservation);
       });
     });
+  });
+
+  describe('POST /api/experiments/:experiment_id/observations', () => {
+    beforeEach('insert data', () => {
+      return db('users').insert(makeUsersArray())
+        .then(() => {
+          return db('experiments').insert(makeExperimentsArray());
+        });
+    });
+
+    it('should create and return a new observation when provided valid data', () => {
+      const newObservation = {
+        observation_title: 'Particle size influences O2 production',
+        observation_notes: 'Carbon emission deposits on local flora inhibits photosynthesis', 
+        experiment_id: 2
+      };
+
+      return supertest(app)
+        .post(`/api/experiments/${newObservation.experiment_id}/observations`)
+        .send(newObservation)
+        .expect(201)
+        .expect(res => {
+  
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.include.keys('observation_title', 'observation_notes', 'experiment_id');
+          expect(res.body.observation_title).to.equal(newObservation.observation_title)
+          expect(res.body.observation_notes).to.equal(newObservation.observation_notes)
+          expect(res.body.experiment_id).to.equal(newObservation.experiment_id)
+          expect(res.headers.location).to.equal(`/api/experiments/${newObservation.experiment_id}/observations/${res.body.id}`)
+        });
+    });
+
+    const requiredFields = ['observation_title', 'observation_notes', 'experiment_id'];
+    requiredFields.forEach(field => {
+      const newObservation = {
+        observation_title: 'Particle density greatly reduces photosynthesis',
+        observation_notes: 'slick gunk affects plants more than light dust', 
+        experiment_id: 2
+      };
+
+      it(`Responds with a 400 and an error message when the '${field}' is missing`, () => {
+        delete newObservation[field];
+        return supertest(app)
+          .post(`/api/experiments/${newObservation.experiment_id}/observations`)
+          .send(newObservation)
+          .expect(400, { error: { message: `Missing '${field}' in request body` } });
+      });
+    });
+  });
+
+  describe(`PATCH /api/experiments/:experiment_id/observations/:observations_id`, () => {
+    beforeEach('insert data', () => {
+      return db('users').insert(makeUsersArray())
+        .then(() => {
+          return db('experiments').insert(makeExperimentsArray());
+        })
+        .then(() => {
+          return db('observations').insert(makeObservationsArray());
+        });
+    });
+
+    it('should update observation when given valid data and an id', () => {
+      const updatedObservation = {
+        observation_title: 'Particle density deeply affects photosynthesis',
+        observation_notes: 'Carbon emission deposits on local flora inhibits photosynthesis by being a physical blocker', 
+      };
+
+      return supertest(app)
+        .patch(`/api/experiments/${makeObservationsArray()[2].experiment_id}/observations/${makeObservationsArray()[2].id}`)
+        .send(updatedObservation)
+        .expect(200)
+        .then(res => {
+          expect(res.body).to.be.a('object');
+          expect(res.body).to.include.keys('id', 'observation_title', 'observation_notes');
+          expect(res.body.observation_title).to.equal(updatedObservation.observation_title);
+          expect(res.body.observation_notes).to.equal(updatedObservation.observation_notes);
+        });
+
+    });
+
+    it('should respond with 400 when given bad data', () => {
+      const badUpdate = {
+        newKey: 'stuff we don not care about'
+      };
+
+      return db('observations')
+        .first()
+        .then(observation => {
+          return supertest(app)
+            .patch(`/api/experiments/${observation.experiment_id}/observations/${observation.id}`)
+            .send(badUpdate)
+            .expect(400);
+        });
+
+    });
+
+    it('should respond with 404 for an invalid id', () => {
+      const updatedObservation = {
+        observation_title: 'Particle density deeply affects photosynthesis',
+        observation_notes: 'Carbon emission deposits on local flora inhibits photosynthesis by being a physical blocker', 
+      };
+
+      return supertest(app)
+        .patch(`/api/experiments/${makeObservationsArray()[2].experiment_id}/observations/123345`)
+        .send(updatedObservation)
+        .expect(404, {
+          error: { message: 'Observation does not exist'}
+        });
+    });
+
   });
 });

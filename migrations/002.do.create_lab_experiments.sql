@@ -6,5 +6,6 @@ CREATE TABLE experiments
   experiment_title TEXT NOT NULL,
   hypothesis TEXT NOT NULL,
   date_created TIMESTAMPTZ NOT NULL DEFAULT now(),
+  variable_name TEXT NOT NULL,
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL 
 )

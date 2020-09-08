@@ -5,6 +5,8 @@ const supertest = require('supertest');
 const { makeUsersArray, makeExperimentsArray, makeVariablesArray, makeObservationsArray } = require('./test-helpers');
 const { expect } = require('chai');
 
+
+
 describe('EXPERIMENTS endpoints', () => {
   let db;
 
@@ -20,11 +22,11 @@ describe('EXPERIMENTS endpoints', () => {
   after('destroy "db" connection', () => db.destroy());
 
   before('Cleanup', () => {
-    return db.raw('TRUNCATE observations, variables, experiments, users RESTART IDENTITY CASCADE');
+    return db.raw('TRUNCATE observations, experiments, users RESTART IDENTITY CASCADE');
   });
 
   afterEach('Cleanup', () => {
-    return db.raw('TRUNCATE observations, variables, experiments, users RESTART IDENTITY CASCADE');
+    return db.raw('TRUNCATE observations, experiments, users RESTART IDENTITY CASCADE');
   });
 
 
@@ -43,9 +45,6 @@ describe('EXPERIMENTS endpoints', () => {
         return db('users').insert(makeUsersArray())
           .then(() => {
             return db('experiments').insert(makeExperimentsArray());
-          })
-          .then(() => {
-            return db('variables').insert(makeVariablesArray());
           })
           .then(() => {
             return db('observations').insert(makeObservationsArray());
@@ -103,7 +102,7 @@ describe('EXPERIMENTS endpoints', () => {
       it('responds with 200 and the specified experiment', () => {
         const expectedExperiment = makeExperimentsArray()[1];
         const expectedExperimentId = expectedExperiment.id;
-  
+
         return supertest(app)
           .get(`/api/experiments/${expectedExperimentId}`)
           .expect(200)
@@ -112,4 +111,75 @@ describe('EXPERIMENTS endpoints', () => {
     });
   });
 
+  describe(`POST /api/experiments`, () => {
+
+    beforeEach('Insert experiments to database', () => {
+      return db('users').insert(makeUsersArray())
+        .then(() => {
+          return db('experiments').insert(makeExperimentsArray());
+        });
+    });
+
+    it.skip(`creates a new experiment and responds with 201 and new experiment`, () => {
+      const newExperiment = {
+        experiment_title: "Test Experiment",
+        hypothesis: "This is expected to behave this way",
+        user_id: 1,
+        variable_name: "farms with cows"
+      };
+
+      return supertest(app)
+        .post('/api/experiments/')
+        .send(newExperiment)
+        .expect(201);
+    });
+
+    const requiredFields = ['experiment_title', 'hypothesis', 'user_id', 'variable_name'];
+    requiredFields.forEach(field => {
+      const newExperiment = {
+        experiment_title: "New Experiment",
+        hypothesis: "This is expected to behave this way",
+        user_id: 1,
+        variable_name: "farms with cows"
+      };
+
+      it(`Responds with a 400 and an error message when the '${field}' is missing`, () => {
+        delete newExperiment[field];
+        return supertest(app)
+          .post('/api/experiments')
+          .send(newExperiment)
+          .expect(400, { error: { message: `Missing '${field}' in request body` } });
+      });
+    });
+
+  });
+
+  describe(`DELETE /api/experiments/:experiment_id`, () => {
+    beforeEach('Insert experiments to database', () => {
+      return db('users').insert(makeUsersArray())
+        .then(() => {
+          return db('experiments').insert(makeExperimentsArray());
+        })
+        .then(() => {
+          return db('observations').insert(makeObservationsArray());
+        });
+    });
+
+    it('should delete experiment by id', () => {
+      return db('experiments')
+        .first()
+        .then(experiment => {
+          return supertest(app)
+            .delete(`/api/experiments/${experiment.id}`)
+            .expect(204);
+        });
+    });
+
+    it('should respond with 404 for an invalid id', () => {
+      return supertest(app)
+        .delete('/api/experiments/12334')
+        .expect(404, { error: { message: 'Experiment does not exist' }});
+    });
+
+  });
 });

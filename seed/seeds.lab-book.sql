@@ -2,15 +2,10 @@
 INSERT INTO users (first_name, last_name, username, password, email)
 VALUES ('Derick', 'Planter', 'dPlanter', 'strongStuff', 'dplanter@herbz.com');
 
-INSERT INTO experiments (experiment_title, hypothesis, user_id)
+INSERT INTO experiments (experiment_title, hypothesis, variable_name, user_id)
 VALUES 
-  ('Plants and Sunlight', 'Plants need sunlight to live', 1),
-  ('Plants and Air quality', 'Particles in air can clog leaf pores', 1);
-
-INSERT INTO variables (variable_name, experiment_id)
-VALUES 
-  ('lamp light', 1),
-  ('lamp light', 2);
+  ('Plants and Sunlight', 'Plants need sunlight to live', 'lamp light', 1),
+  ('Plants and Air quality', 'Particles in air can clog leaf pores', 'near carbon factories', 1);
 
 INSERT INTO observations (observation_title, observation_notes, experiment_id)
 VALUES 

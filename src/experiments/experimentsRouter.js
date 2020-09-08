@@ -1,6 +1,8 @@
 const express = require('express');
+const path = require('path');
 const experimentsRouter = express.Router();
 const ExperimentsService = require('./experimentsService');
+const jsonParser = express.json();
 
 experimentsRouter
   .route('/')
@@ -12,6 +14,25 @@ experimentsRouter
           return res.json(experiments);
         }
         return res.json(experiments);
+      })
+      .catch(next);
+  })
+  .post(jsonParser, (req, res, next) => {
+    const { experiment_title, hypothesis, user_id, variable_name} = req.body;
+  
+    const newExperiment = { experiment_title, hypothesis, user_id, variable_name};
+    for (const [key, value] of Object.entries(newExperiment))
+      if(value == null) 
+        return res.status(400).json({
+          error: {message :`Missing '${key}' in request body` }
+        });
+    //newExperiment.user_id = req.user.id
+    ExperimentsService.insertExperiment(req.app.get('db'), newExperiment)
+      .then()
+      .then(experiment => {
+        return res.status(201)
+          .location(path.posix.join(req.originalUrl, `/${experiment.id}`))
+          .json(experiment);
       })
       .catch(next);
   });
@@ -28,6 +49,17 @@ experimentsRouter
           });
         }
         return res.json(experiment);
+      })
+      .catch(next);
+  })
+  .delete((req, res, next) => {
+    const experiment_id = req.params.experiment_id;
+    ExperimentsService.deleteExperiment(req.app.get('db'), experiment_id)
+      .then(numRowsAffected => {
+        if(!numRowsAffected){
+          res.status(404).json({ error: { message: 'Experiment does not exist' }});
+        }
+        res.status(204).end();
       })
       .catch(next);
   });

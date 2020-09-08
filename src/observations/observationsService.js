@@ -11,6 +11,20 @@ const observationsService = {
       .select('*')
       .where('id', id)
       .first();
+  },
+  insertObservation(db, newObservation) {
+    return db('observations')
+      .insert(newObservation)
+      .returning('*')
+      .then(([observation]) => observation)
+      .then(observation =>
+        observationsService.getObservationById(db, observation.id));
+  },
+  updateObservation(db, observationId, observationToUpdate) {
+    return db('observations')
+      .where({id: observationId})
+      .update(observationToUpdate, returning=true)
+      .returning('*');
   }
 
 };

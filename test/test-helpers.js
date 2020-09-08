@@ -28,6 +28,7 @@ function makeExperimentsArray() {
       experiment_title: 'Effects of Vibrations on Ant Colonies',
       hypothesis: 'Ants use vibrations to react to their environment', 
       date_created: '2020-08-23T08:34:13.000Z',
+      variable_name: 'surface only vibrations',
       user_id: 1
     },
     {
@@ -35,6 +36,7 @@ function makeExperimentsArray() {
       experiment_title: 'Pesticides and Bees',
       hypothesis: 'Pesticides containing synthetic chemicals contribute to bee death', 
       date_created: '2020-03-19T08:34:13.000Z',
+      variable_name: 'using Synthecide',
       user_id: 1
     },
     {
@@ -42,6 +44,7 @@ function makeExperimentsArray() {
       experiment_title: 'Air pollution and decrease plant oxygen production',
       hypothesis: 'Air pollutants aggregate on plant surface and decreases plant oxygen production', 
       date_created: '2020-05-10T08:34:13.000Z',
+      variable_name: 'cleaning leaves',
       user_id: 2
     },
   ];
