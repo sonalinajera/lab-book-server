@@ -4,7 +4,6 @@ const knex = require('knex');
 const supertest = require('supertest');
 const { makeUsersArray, makeExperimentsArray, makeObservationsArray, makeMaliciousObservationEntry } = require('./test-helpers');
 const { expect } = require('chai');
-const observationsService = require('../src/observations/observationsService');
 
 describe('OBSERVATION ENDPOINTS', () => {
   let db;
