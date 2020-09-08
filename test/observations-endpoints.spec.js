@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
 const supertest = require('supertest');
-const { makeUsersArray, makeExperimentsArray, makeObservationsArray, makeVariablesArray } = require('./test-helpers');
+const { makeUsersArray, makeExperimentsArray, makeObservationsArray, makeMaliciousObservationEntry } = require('./test-helpers');
 const { expect } = require('chai');
 const observationsService = require('../src/observations/observationsService');
 
@@ -55,7 +55,7 @@ describe('OBSERVATION ENDPOINTS', () => {
           {
             id: 1,
             observation_title: 'Colony health',
-            observation_notes: "Colony's health is good, bees are active",
+            observation_notes: 'Colony\'s health is good, bees are active',
             date_created: '2020-03-20T08:34:13.000Z',
             experiment_id: 2
           },
@@ -76,6 +76,36 @@ describe('OBSERVATION ENDPOINTS', () => {
       });
 
     });
+
+    context('Given an XSS attack observation', () => {
+      beforeEach('Inser users and experiments to database', () => {
+        return db('users').insert(makeUsersArray())
+          .then(() => {
+            return db('experiments').insert(makeExperimentsArray());
+          });
+      });
+
+      const { maliciousObservation, expectedObservation } = makeMaliciousObservationEntry();
+
+      beforeEach('Insert malicious observation entry', () => {
+        return db('observations')
+          .insert(maliciousObservation);
+      });
+
+      it('Removes XSS attack content', () => {
+        return supertest(app)
+          .get(`/api/experiments/${maliciousObservation.experiment_id}/observations`)
+          .expect(200)
+          .expect(res => {
+            expect(res.body[0].observation_title).to.eql(expectedObservation.observation_title);
+            expect(res.body[0].observation_notes).to.eql(expectedObservation.observation_notes);
+            expect(res.body[0].experiment_id).to.eql(expectedObservation.experiment_id);
+            expect(res.body[0]).to.have.property('date_created');
+          });
+      });
+
+    });
+
   });
 
   describe(`GET /api/experiments/:experiment_id/observations/:observations_id`, () => {
@@ -134,10 +164,10 @@ describe('OBSERVATION ENDPOINTS', () => {
   
           expect(res.body).to.be.a('object');
           expect(res.body).to.include.keys('observation_title', 'observation_notes', 'experiment_id');
-          expect(res.body.observation_title).to.equal(newObservation.observation_title)
-          expect(res.body.observation_notes).to.equal(newObservation.observation_notes)
-          expect(res.body.experiment_id).to.equal(newObservation.experiment_id)
-          expect(res.headers.location).to.equal(`/api/experiments/${newObservation.experiment_id}/observations/${res.body.id}`)
+          expect(res.body.observation_title).to.equal(newObservation.observation_title);
+          expect(res.body.observation_notes).to.equal(newObservation.observation_notes);
+          expect(res.body.experiment_id).to.equal(newObservation.experiment_id);
+          expect(res.headers.location).to.equal(`/api/experiments/${newObservation.experiment_id}/observations/${res.body.id}`);
         });
     });
 
@@ -157,6 +187,26 @@ describe('OBSERVATION ENDPOINTS', () => {
           .expect(400, { error: { message: `Missing '${field}' in request body` } });
       });
     });
+
+    it('Removes malicious XSS attack before inserting', () => {
+      const { maliciousObservation, expectedObservation } = makeMaliciousObservationEntry();
+
+      return supertest(app)
+        .post(`/api/experiments/${maliciousObservation.experiment_id}/observations`)
+        .send(maliciousObservation)
+        .expect(201)
+        .expect(res => {
+          expect(res.body.observation_title).to.eql(expectedObservation.observation_title);
+          expect(res.body.observation_notes).to.eql(expectedObservation.observation_notes);
+          expect(res.body.experiment_id).to.equal(expectedObservation.experiment_id);
+        })
+        .then(res => 
+          supertest(app)
+            .get(`/api/experiments/${maliciousObservation.experiment_id}/observations/${res.body.id}`)
+            .expect(res.body)
+        );
+    });
+
   });
 
   describe(`PATCH /api/experiments/:experiment_id/observations/:observations_id`, () => {
@@ -218,6 +268,25 @@ describe('OBSERVATION ENDPOINTS', () => {
           error: { message: 'Observation does not exist'}
         });
     });
+
+    it('Removes malicious XSS attack before updating', () => {
+      const { maliciousObservationUpdate, expectedObservationUpdate } = makeMaliciousObservationEntry();
+
+      return supertest(app)
+        .patch(`/api/experiments/2/observations/1`)
+        .send(maliciousObservationUpdate)
+        .expect(200)
+        .expect(res => {
+          expect(res.body.observation_title).to.eql(expectedObservationUpdate.observation_title);
+          expect(res.body.observation_notes).to.eql(expectedObservationUpdate.observation_notes);
+        })
+        .then(res => 
+          supertest(app)
+            .get(`/api/experiments/2/observations/${res.body.id}`)
+            .expect(res.body)
+        );
+    });
+
   });
 
   describe(`DELETE /api/experiments/:experiment_id/observations/:observations_id`, () => {

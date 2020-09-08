@@ -38,7 +38,6 @@ experimentsRouter
         });
     //newExperiment.user_id = req.user.id
     ExperimentsService.insertExperiment(req.app.get('db'), newExperiment)
-      .then()
       .then(experiment => {
         return res.status(201)
           .location(path.posix.join(req.originalUrl, `/${experiment.id}`))

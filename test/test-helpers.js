@@ -50,30 +50,30 @@ function makeExperimentsArray() {
   ];
 }
 
-function makeVariablesArray() {
-  return [
-    {
-      id: 1,
-      variable_name: 'surface only vibrations',
-      experiment_id: 1
-    },
-    {
-      id: 2,
-      variable_name: 'using Synthecide',
-      experiment_id: 2
-    },
-    {
-      id: 3,
-      variable_name: 'manmade vibrations',
-      experiment_id: 1
-    },
-    {
-      id: 4,
-      variable_name: 'cleaning leaves',
-      experiment_id: 3
-    },
-  ];
-}
+// function makeVariablesArray() {
+//   return [
+//     {
+//       id: 1,
+//       variable_name: 'surface only vibrations',
+//       experiment_id: 1
+//     },
+//     {
+//       id: 2,
+//       variable_name: 'using Synthecide',
+//       experiment_id: 2
+//     },
+//     {
+//       id: 3,
+//       variable_name: 'manmade vibrations',
+//       experiment_id: 1
+//     },
+//     {
+//       id: 4,
+//       variable_name: 'cleaning leaves',
+//       experiment_id: 3
+//     },
+//   ];
+// }
 
 function makeObservationsArray() {
   return [
@@ -100,6 +100,60 @@ function makeObservationsArray() {
     },
   ];
 }
+//XSS 
+function makeMaliciousExperimentEntry() {
+  const maliciousExperiment = {
+    experiment_title: 'Fake title <script>alert("xss");</script>',
+    hypothesis: 'Fake hypothesis <script>alert("xss");</script>',
+    variable_name: 'Fake variable <script>alert("xss");</script>',
+    user_id: 1
+  };
+
+  const expectedExperiment = {
+    experiment_title: 'Fake title &lt;script&gt;alert("xss");&lt;/script&gt;',
+    hypothesis: 'Fake hypothesis &lt;script&gt;alert("xss");&lt;/script&gt;',
+    variable_name: 'Fake variable &lt;script&gt;alert("xss");&lt;/script&gt;',
+    user_id: 1
+  };
+
+  return {
+    maliciousExperiment,
+    expectedExperiment
+  };
+}
+
+function makeMaliciousObservationEntry () {
+  const maliciousObservation = {
+    observation_title: 'Colony health <script>alert("xss");</script>',
+    observation_notes: `Colony's <script>alert("xss");</script> health is good, bees are active`,
+    experiment_id: 2
+  };
+
+  const expectedObservation = {
+    observation_title: 'Colony health &lt;script&gt;alert("xss");&lt;/script&gt;',
+    observation_notes: `Colony's &lt;script&gt;alert("xss");&lt;/script&gt; health is good, bees are active`,
+    experiment_id: 2
+  };
+
+  const maliciousObservationUpdate = {
+    observation_title: 'Colony health <script>alert("xss");</script>',
+    observation_notes: `Colony's <script>alert("xss");</script> health is good, bees are active`,
+  };
+
+  const expectedObservationUpdate = {
+    observation_title: 'Colony health &lt;script&gt;alert("xss");&lt;/script&gt;',
+    observation_notes: `Colony's &lt;script&gt;alert("xss");&lt;/script&gt; health is good, bees are active`
+  }
+  
+  return {
+    maliciousObservation,
+    expectedObservation,
+    maliciousObservationUpdate,
+    expectedObservationUpdate
+  };
+}
+
+//Seeding database for test files
 
 function seedUsers(db, users) {
   return db.into('users').insert(users)
@@ -129,33 +183,14 @@ function seedAllTables(db) {
 
 }
 
-function makeMaliciousExperimentEntry() {
-  const maliciousExperiment = {
-    experiment_title: 'Fake title <script>alert("xss");</script>',
-    hypothesis: 'Fake hypothesis <script>alert("xss");</script>',
-    variable_name: 'Fake variable <script>alert("xss");</script>',
-    user_id: 1
-  };
 
-  const expectedExperiment = {
-    experiment_title: 'Fake title &lt;script&gt;alert("xss");&lt;/script&gt;',
-    hypothesis: 'Fake hypothesis &lt;script&gt;alert("xss");&lt;/script&gt;',
-    variable_name: 'Fake variable &lt;script&gt;alert("xss");&lt;/script&gt;',
-    user_id: 1
-  };
-
-  return {
-    maliciousExperiment,
-    expectedExperiment
-  };
-}
 
 module.exports = {
   makeUsersArray,
   makeExperimentsArray,
-  makeVariablesArray,
   makeObservationsArray,
   seedUsers,
   seedAllTables,
-  makeMaliciousExperimentEntry
+  makeMaliciousExperimentEntry,
+  makeMaliciousObservationEntry
 };

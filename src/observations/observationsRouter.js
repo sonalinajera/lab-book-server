@@ -2,7 +2,16 @@ const express = require('express');
 const observationsRouter = express.Router();
 const ObservationsService = require('./observationsService');
 const jsonParser = express.json();
+const xss = require('xss');
 const path = require('path');
+
+const serializeObservation = observation => ({
+  id: observation.id,
+  observation_title: xss(observation.observation_title), 
+  observation_notes: xss(observation.observation_notes),
+  experiment_id: parseInt(xss(observation.experiment_id)),
+  date_created: observation.date_created
+});
 
 observationsRouter
   .route('/:experiment_id/observations')
@@ -13,7 +22,7 @@ observationsRouter
         if (!observations) {
           return res.json(observations);
         }
-        return res.send(observations);
+        return res.send(observations.map(serializeObservation));
       })
       .catch(next);
   })
@@ -31,7 +40,7 @@ observationsRouter
       .then(observation => {
         return res.status(201)
           .location(path.posix.join(req.originalUrl, `/${observation.id}`))
-          .json(observation);
+          .json(serializeObservation(observation));
       })
       .catch(next);
   });
@@ -48,7 +57,7 @@ observationsRouter
             error: { message: 'Observation does not exist' }
           });
         }
-        return res.send(observation);
+        return res.send(serializeObservation(observation));
       }).catch(next);
   })
   .patch(jsonParser, (req, res, next) => {
@@ -71,7 +80,7 @@ observationsRouter
             error: { message: 'Observation does not exist'}
           });
         }
-        return res.status(200).json(updatedObservation[0]);
+        return res.status(200).json(serializeObservation(updatedObservation[0]));
       })
       .catch(next);
 
