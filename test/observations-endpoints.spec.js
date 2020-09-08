@@ -218,6 +218,35 @@ describe('OBSERVATION ENDPOINTS', () => {
           error: { message: 'Observation does not exist'}
         });
     });
+  });
+
+  describe(`DELETE /api/experiments/:experiment_id/observations/:observations_id`, () => {
+    beforeEach('Insert experiments to database', () => {
+      return db('users').insert(makeUsersArray())
+        .then(() => {
+          return db('experiments').insert(makeExperimentsArray());
+        })
+        .then(() => {
+          return db('observations').insert(makeObservationsArray());
+        });
+    });
+
+    it('should delete observation by id', () => {
+      return db('experiments')
+        .first()
+        .then(experiment => {
+          return supertest(app)
+            .delete(`/api/experiments/${experiment.id}/observations/${makeObservationsArray()[0].id}`)
+            .expect(204);
+        });
+    });
+
+    it('should respond with 404 for an invalid id', () => {
+      return supertest(app)
+        .delete('/api/experiments/1/observations/12345')
+        .expect(404, { error: { message: 'Observation does not exist' }});
+    });
 
   });
+
 });

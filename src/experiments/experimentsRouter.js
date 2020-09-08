@@ -57,9 +57,9 @@ experimentsRouter
     ExperimentsService.deleteExperiment(req.app.get('db'), experiment_id)
       .then(numRowsAffected => {
         if(!numRowsAffected){
-          res.status(404).json({ error: { message: 'Experiment does not exist' }});
+          return res.status(404).json({ error: { message: 'Experiment does not exist' }});
         }
-        res.status(204).end();
+        return res.status(204).end();
       })
       .catch(next);
   });

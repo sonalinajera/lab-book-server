@@ -114,13 +114,10 @@ describe('EXPERIMENTS endpoints', () => {
   describe(`POST /api/experiments`, () => {
 
     beforeEach('Insert experiments to database', () => {
-      return db('users').insert(makeUsersArray())
-        .then(() => {
-          return db('experiments').insert(makeExperimentsArray());
-        });
+      return db('users').insert(makeUsersArray());
     });
 
-    it.skip(`creates a new experiment and responds with 201 and new experiment`, () => {
+    it(`creates a new experiment and responds with 201 and new experiment`, () => {
       const newExperiment = {
         experiment_title: "Test Experiment",
         hypothesis: "This is expected to behave this way",

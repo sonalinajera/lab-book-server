@@ -25,6 +25,11 @@ const observationsService = {
       .where({id: observationId})
       .update(observationToUpdate, returning=true)
       .returning('*');
+  },
+  deleteObservation(db, id){
+    return db('observations')
+      .where('id', id)
+      .delete();
   }
 
 };

@@ -75,6 +75,17 @@ observationsRouter
       })
       .catch(next);
 
+  })
+  .delete((req, res, next) => {
+    const observation_id = req.params.observation_id;
+    ObservationsService.deleteObservation(req.app.get('db'), observation_id)
+      .then(numRowsAffected => {
+        if(!numRowsAffected) {
+          res.status(404).json({ error: { message: 'Observation does not exist' }});
+        }
+        return res.status(204).end();
+      })
+      .catch(next);
   });
 
 module.exports = observationsRouter;
