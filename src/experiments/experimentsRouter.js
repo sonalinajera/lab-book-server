@@ -20,8 +20,9 @@ experimentsRouter
 
     ExperimentsService.getAllExperiments(req.app.get('db'))
       .then(experiments => {
-        if(!experiments) {
-          return res.json(experiments);
+        console.log(experiments)
+        if(!experiments || experiments[0].id === null) {
+          return res.json([]);
         }
         return res.json(experiments.map(serializeExperiment));
       })
