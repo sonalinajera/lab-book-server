@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
 const supertest = require('supertest');
-const { makeUsersArray, makeExperimentsArray, makeObservationsArray, makeMaliciousObservationEntry } = require('./test-helpers');
+const { makeUsersArray, makeExperimentsArray, makeObservationsArray, makeMaliciousObservationEntry, makeAuthHeader } = require('./test-helpers');
 const { expect } = require('chai');
 
 describe('OBSERVATION ENDPOINTS', () => {
@@ -32,6 +32,7 @@ describe('OBSERVATION ENDPOINTS', () => {
       it('Responds with a 200 and an empty array', () => {
         return supertest(app)
           .get('/api/experiments/1/observations')
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200, []);
       });
     });
@@ -69,6 +70,7 @@ describe('OBSERVATION ENDPOINTS', () => {
 
         return supertest(app)
           .get(`/api/experiments/${experimentId}/observations`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200)
           .expect(expectedObservations);
 
@@ -94,6 +96,7 @@ describe('OBSERVATION ENDPOINTS', () => {
       it('Removes XSS attack content', () => {
         return supertest(app)
           .get(`/api/experiments/${maliciousObservation.experiment_id}/observations`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200)
           .expect(res => {
             expect(res.body[0].observation_title).to.eql(expectedObservation.observation_title);
@@ -124,6 +127,7 @@ describe('OBSERVATION ENDPOINTS', () => {
         const testObservationId = 12345;
         return supertest(app)
           .get(`/api/experiments/2/observations/${testObservationId}`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(404, { error: { message: 'Observation does not exist'}});
       });
     });
@@ -134,6 +138,7 @@ describe('OBSERVATION ENDPOINTS', () => {
         const observationId = 1;
         return supertest(app)
           .get(`/api/experiments/1/observations/${observationId}`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200)
           .expect(expectedObservation);
       });
@@ -157,6 +162,7 @@ describe('OBSERVATION ENDPOINTS', () => {
 
       return supertest(app)
         .post(`/api/experiments/${newObservation.experiment_id}/observations`)
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .send(newObservation)
         .expect(201)
         .expect(res => {
@@ -182,6 +188,7 @@ describe('OBSERVATION ENDPOINTS', () => {
         delete newObservation[field];
         return supertest(app)
           .post(`/api/experiments/${newObservation.experiment_id}/observations`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .send(newObservation)
           .expect(400, { error: { message: `Missing '${field}' in request body` } });
       });
@@ -192,6 +199,7 @@ describe('OBSERVATION ENDPOINTS', () => {
 
       return supertest(app)
         .post(`/api/experiments/${maliciousObservation.experiment_id}/observations`)
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .send(maliciousObservation)
         .expect(201)
         .expect(res => {
@@ -227,6 +235,7 @@ describe('OBSERVATION ENDPOINTS', () => {
 
       return supertest(app)
         .patch(`/api/experiments/${makeObservationsArray()[2].experiment_id}/observations/${makeObservationsArray()[2].id}`)
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .send(updatedObservation)
         .expect(200)
         .then(res => {
@@ -248,6 +257,7 @@ describe('OBSERVATION ENDPOINTS', () => {
         .then(observation => {
           return supertest(app)
             .patch(`/api/experiments/${observation.experiment_id}/observations/${observation.id}`)
+            .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
             .send(badUpdate)
             .expect(400);
         });
@@ -262,6 +272,7 @@ describe('OBSERVATION ENDPOINTS', () => {
 
       return supertest(app)
         .patch(`/api/experiments/${makeObservationsArray()[2].experiment_id}/observations/123345`)
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .send(updatedObservation)
         .expect(404, {
           error: { message: 'Observation does not exist'}
@@ -273,6 +284,7 @@ describe('OBSERVATION ENDPOINTS', () => {
 
       return supertest(app)
         .patch(`/api/experiments/2/observations/1`)
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .send(maliciousObservationUpdate)
         .expect(200)
         .expect(res => {
@@ -305,6 +317,7 @@ describe('OBSERVATION ENDPOINTS', () => {
         .then(experiment => {
           return supertest(app)
             .delete(`/api/experiments/${experiment.id}/observations/${makeObservationsArray()[0].id}`)
+            .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
             .expect(204);
         });
     });
@@ -312,6 +325,7 @@ describe('OBSERVATION ENDPOINTS', () => {
     it('should respond with 404 for an invalid id', () => {
       return supertest(app)
         .delete('/api/experiments/1/observations/12345')
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .expect(404, { error: { message: 'Observation does not exist' }});
     });
 
