@@ -2,7 +2,7 @@ require('dotenv').config();
 const app = require('../src/app');
 const knex = require('knex');
 const supertest = require('supertest');
-const { makeUsersArray, makeExperimentsArray, makeMaliciousExperimentEntry, makeObservationsArray } = require('./test-helpers');
+const { makeUsersArray, makeExperimentsArray, makeMaliciousExperimentEntry, makeObservationsArray, makeAuthHeader } = require('./test-helpers');
 const { expect } = require('chai');
 
 
@@ -36,6 +36,7 @@ describe('EXPERIMENTS endpoints', () => {
       it('returns a 200 and an empty array', () => {
         return supertest(app)
           .get('/api/experiments')
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200, []);
       });
     });
@@ -55,9 +56,9 @@ describe('EXPERIMENTS endpoints', () => {
         const expected = makeExperimentsArray()[0];
         return supertest(app)
           .get('/api/experiments')
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200)
           .then(res => {
-            console.log(res.body)
             expect(res.body[0].id).to.eql(expected.id);
             expect(res.body[0].experiment_title).to.eql(expected.experiment_title);
             expect(res.body[0].hypothesis).to.eql(expected.hypothesis);
@@ -83,6 +84,7 @@ describe('EXPERIMENTS endpoints', () => {
       it('Removes XSS attack content', () => {
         return supertest(app)
           .get('/api/experiments')
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200)
           .expect(res => {
             expect(res.body[0].experiment_title).to.eql(expectedExperiment.experiment_title);
@@ -103,6 +105,7 @@ describe('EXPERIMENTS endpoints', () => {
 
         return supertest(app)
           .get(`/api/experiments/${experiment_id}`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(404, { error: { message: 'Experiment does not exist' } });
       });
     });
@@ -119,6 +122,7 @@ describe('EXPERIMENTS endpoints', () => {
         const experiment_id = 12345;
         return supertest(app)
           .get(`/api/experiments/${experiment_id}`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(404, { error: { message: 'Experiment does not exist' } });
       });
 
@@ -128,6 +132,7 @@ describe('EXPERIMENTS endpoints', () => {
 
         return supertest(app)
           .get(`/api/experiments/${expectedExperimentId}`)
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .expect(200)
           .expect(expectedExperiment);
       });
@@ -150,6 +155,7 @@ describe('EXPERIMENTS endpoints', () => {
 
       return supertest(app)
         .post('/api/experiments/')
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .send(newExperiment)
         .expect(201);
     });
@@ -167,6 +173,7 @@ describe('EXPERIMENTS endpoints', () => {
         delete newExperiment[field];
         return supertest(app)
           .post('/api/experiments')
+          .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
           .send(newExperiment)
           .expect(400, { error: { message: `Missing '${field}' in request body` } });
       });
@@ -177,6 +184,7 @@ describe('EXPERIMENTS endpoints', () => {
 
       return supertest(app)
         .post('/api/experiments/')
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .send(maliciousExperiment)
         .expect(201)
         .expect(res => {
@@ -210,6 +218,7 @@ describe('EXPERIMENTS endpoints', () => {
         .then(experiment => {
           return supertest(app)
             .delete(`/api/experiments/${experiment.id}`)
+            .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
             .expect(204);
         });
     });
@@ -217,6 +226,7 @@ describe('EXPERIMENTS endpoints', () => {
     it('should respond with 404 for an invalid id', () => {
       return supertest(app)
         .delete('/api/experiments/12334')
+        .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
         .expect(404, { error: { message: 'Experiment does not exist' } });
     });
 

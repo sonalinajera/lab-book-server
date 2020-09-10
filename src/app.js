@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
 const experimentsRouter = require('./experiments/experimentsRouter');
 const observationsRouter = require('./observations/observationsRouter');
+const authRouter = require('./auth/auth-router')
 
 const app = express();
 
@@ -13,12 +14,16 @@ const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
 
-app.use(morgan(morganOption));
+app.use(morgan(morganOption, {
+  skip: () => NODE_ENV === 'test',
+}));
 app.use(helmet());
 app.use(cors());
 
 app.use('/api/experiments', experimentsRouter);
 app.use('/api/experiments', observationsRouter);
+app.use('/api/auth', authRouter)
+
 app.get('/', (req, res) => {
   res.send('Hello, world!');
 });

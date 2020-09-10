@@ -1,3 +1,6 @@
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 function makeUsersArray() {
   return [
     {
@@ -156,12 +159,26 @@ function makeMaliciousObservationEntry () {
 //Seeding database for test files
 
 function seedUsers(db, users) {
-  return db.into('users').insert(users)
-  //     .then(() => 
-  //       db.raw(
-  //         `SELECT setval('lab-book_users_id_seq', ?)`,
-  //         [users[users.length - 1].id]
-  //       ));
+  const preppedUsers = users.map(user => ({
+    ...user,
+    password: bcrypt.hashSync(user.password, 1)
+  }))
+  
+  return db.into('users').insert(preppedUsers)
+      .then(() => 
+            // update the auto sequence to stay in sync
+        db.raw(
+          `SELECT setval('users_id_seq', ?)`,
+          [users[users.length - 1].id]
+        ));
+}
+
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+  const token = jwt.sign({ user_id: user.id }, secret, {
+    subject: user.username,
+    algorithm: 'HS256',
+  })
+  return `Bearer ${token}`
 }
 
 // function seedExperiments(db, experiments) {
@@ -192,5 +209,6 @@ module.exports = {
   seedUsers,
   seedAllTables,
   makeMaliciousExperimentEntry,
-  makeMaliciousObservationEntry
+  makeMaliciousObservationEntry,
+  makeAuthHeader
 };
