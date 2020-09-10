@@ -26,7 +26,7 @@ experimentsRouter
         if(experiments.length === 0 || experiments[0].id === null) {
           return res.json([]);
         }
-        return res.json(experiments.map(serializeExperiment));
+        return res.json(experiments.map(ExperimentsService.serializeExperiment));
       })
       .catch(next);
   })

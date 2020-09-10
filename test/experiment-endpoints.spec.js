@@ -5,7 +5,15 @@ const supertest = require('supertest');
 const { makeUsersArray, makeExperimentsArray, makeMaliciousExperimentEntry, makeObservationsArray, makeAuthHeader } = require('./test-helpers');
 const { expect } = require('chai');
 
-
+//TODO update expect validations to expect data structure below
+// { Experiment Data,
+//   user: {
+//     user data
+//   }
+//   observations: {
+//     observation data
+//   }
+// }
 
 describe('EXPERIMENTS endpoints', () => {
   let db;
