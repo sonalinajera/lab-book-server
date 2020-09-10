@@ -32,7 +32,13 @@ describe('EXPERIMENTS endpoints', () => {
 
   describe(`GET /api/experiments`, () => {
 
+    
     context('Given no experiments in the database', () => {
+
+      beforeEach('Insert users to database', () => {
+        return db('users').insert(makeUsersArray());
+      });
+
       it('returns a 200 and an empty array', () => {
         return supertest(app)
           .get('/api/experiments')
@@ -99,6 +105,9 @@ describe('EXPERIMENTS endpoints', () => {
   describe(`GET /api/experiments/:experiment_id`, () => {
 
     context('Given no experiments', () => {
+      beforeEach('Insert users to database', () => {
+        return db('users').insert(makeUsersArray());
+      });
 
       it('Responds with 404 and experiment does not exist', () => {
         const experiment_id = 2;
@@ -196,6 +205,7 @@ describe('EXPERIMENTS endpoints', () => {
         .then(res => 
           supertest(app)
             .get(`/api/experiments/${res.body.id}`)
+            .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
             .expect(res.body)
         );
     });

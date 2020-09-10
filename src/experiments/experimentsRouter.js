@@ -4,6 +4,7 @@ const experimentsRouter = express.Router();
 const ExperimentsService = require('./experimentsService');
 const jsonParser = express.json();
 const xss = require('xss');
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const serializeExperiment = experiment => ({
   id: experiment.id,
@@ -16,6 +17,7 @@ const serializeExperiment = experiment => ({
 
 experimentsRouter
   .route('/')
+  .all(requireAuth)
   .get((req, res, next) => {
 
     ExperimentsService.getAllExperiments(req.app.get('db'))
@@ -49,6 +51,7 @@ experimentsRouter
 
 experimentsRouter
   .route('/:experiment_id')
+  .all(requireAuth)
   .get((req, res, next) => {
     const  experiment_id  = req.params.experiment_id;
     ExperimentsService.getExperimentById(req.app.get('db'), experiment_id) 
