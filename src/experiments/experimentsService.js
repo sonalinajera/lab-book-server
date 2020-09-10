@@ -43,10 +43,49 @@ const experimentsService = {
       .orderBy('experiments.id', 'asc');
   },
   getExperimentById(db, id) {
-    return db('experiments')
-      .select('*')
-      .where('id', id)
-      .first();
+    return db
+    .from('experiments')
+    .select(
+      'experiments.id',
+      'experiments.experiment_title',
+      'experiments.hypothesis',
+      'experiments.date_created',
+      'experiments.variable_name',
+      'experiments.user_id',
+      db.raw(
+        `json_strip_nulls(
+          row_to_json(
+            (SELECT tmp FROM (
+              SELECT
+                users.id,
+                users.username,
+                users.first_name,
+                users.last_name,
+                users.email,
+                users.date_created
+          ) tmp)
+          )
+        ) AS "user"`
+      ),
+      db.raw(
+        `json_strip_nulls(
+          row_to_json(
+            (SELECT tmp FROM (
+              SELECT
+                observations.id,
+                observations.observation_title,
+                observations.observation_notes,
+                observations.experiment_id,
+                observations.date_created
+          ) tmp)
+          )
+        ) AS "observations"`
+      )
+      )
+    .leftJoin('users', 'experiments.user_id', 'users.id')
+    .leftJoin('observations', 'experiments.id', 'observations.experiment_id')
+    .where('experiments.id', id)
+    .first();
   },
 
   insertExperiment(db, newExperiment) {

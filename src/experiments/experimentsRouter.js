@@ -32,19 +32,18 @@ experimentsRouter
   })
   .post(jsonParser, (req, res, next) => {
     const { experiment_title, hypothesis, user_id, variable_name} = req.body;
-  
     const newExperiment = { experiment_title, hypothesis, user_id, variable_name};
     for (const [key, value] of Object.entries(newExperiment))
       if(value == null) 
         return res.status(400).json({
           error: {message :`Missing '${key}' in request body` }
         });
-    //newExperiment.user_id = req.user.id
+    newExperiment.user_id = req.user.id
     ExperimentsService.insertExperiment(req.app.get('db'), newExperiment)
       .then(experiment => {
         return res.status(201)
           .location(path.posix.join(req.originalUrl, `/${experiment.id}`))
-          .json(serializeExperiment(experiment));
+          .json(ExperimentsService.serializeExperiment(experiment));
       })
       .catch(next);
   });
@@ -61,7 +60,7 @@ experimentsRouter
             error: { message: 'Experiment does not exist' } 
           });
         }
-        return res.json(serializeExperiment(experiment));
+        return res.json(ExperimentsService.serializeExperiment(experiment));
       })
       .catch(next);
   })

@@ -40,7 +40,8 @@ function makeExperimentsArray() {
       hypothesis: 'Pesticides containing synthetic chemicals contribute to bee death',
       date_created: '2020-03-19T08:34:13.000Z',
       variable_name: 'using Synthecide',
-      user_id: 1
+      user_id: 1,
+      
     },
     {
       id: 3,

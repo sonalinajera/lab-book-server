@@ -132,6 +132,9 @@ describe('EXPERIMENTS endpoints', () => {
         return db('users').insert(makeUsersArray())
           .then(() => {
             return db('experiments').insert(makeExperimentsArray());
+          })
+          .then(() => {
+            return db('observations').insert(makeObservationsArray())
           });
       });
 
@@ -144,7 +147,29 @@ describe('EXPERIMENTS endpoints', () => {
       });
 
       it('responds with 200 and the specified experiment', () => {
-        const expectedExperiment = makeExperimentsArray()[1];
+        const expectedExperiment = {
+          id: 2,
+          experiment_title: 'Pesticides and Bees',
+          hypothesis: 'Pesticides containing synthetic chemicals contribute to bee death',
+          user_id: 1,
+          variable_name: 'using Synthecide',
+          date_created: '2020-03-19T08:34:13.000Z',
+          user: {
+            id: 1,
+            username: 'MyDude',
+            first_name: 'Litany',
+            last_name: 'TheSinger',
+            email: 'litany@song.com',
+            date_created: '2020-08-25T08:34:13.000Z'
+          },
+          observations: {
+            id: 1,
+            observation_title: 'Colony health',
+            observation_notes: "Colony's health is good, bees are active",
+            experiment_id: 2,
+            date_created: '2020-03-20T08:34:13+00:00'
+          }
+        }
         const expectedExperimentId = expectedExperiment.id;
 
         return supertest(app)
@@ -211,10 +236,18 @@ describe('EXPERIMENTS endpoints', () => {
           expect(res.body.user_id).to.eql(expectedExperiment.user_id);
         })
         .then(res => 
-          supertest(app)
-            .get(`/api/experiments/${res.body.id}`)
-            .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
-            .expect(res.body)
+          {
+            return supertest(app)
+              .get(`/api/experiments/${res.body.id}`)
+              .set('Authorization', makeAuthHeader(makeUsersArray()[0]))
+              .then(res => 
+                { 
+                  expect(res.body.experiment_title).to.eql(expectedExperiment.experiment_title)
+                  expect(res.body.hypothesis).to.eql(expectedExperiment.hypothesis)
+                  expect(res.body.user_id).to.eql(expectedExperiment.user_id)
+                  expect(res.body).to.have.property('date_created')
+                })
+            }
         );
     });
   });
