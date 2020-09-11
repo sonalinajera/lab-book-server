@@ -4,7 +4,13 @@ const experimentsService = {
   getExperimentsByUser(db, userId) {
     return db
       .from('experiments')
-      .select('*',
+      .select(
+      'experiments.id',
+      'experiments.experiment_title',
+      'experiments.hypothesis',
+      'experiments.date_created',
+      'experiments.variable_name',
+      'experiments.user_id',
       db.raw(
         `json_strip_nulls(
           json_build_object(
