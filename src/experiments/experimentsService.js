@@ -24,22 +24,22 @@ const experimentsService = {
             )
           ) AS "user"`
         ),
-        db.raw(
-          `json_strip_nulls(
-            json_build_object(
-              'id', observations.id,
-              'observation_title', observations.observation_title,
-              'observation_notes', observations.observation_notes,
-              'experiment_id', observations.experiment_id,
-              'date_created', observations.date_created
-            )
-          ) AS "observations"`
-        )
+        // db.raw(
+        //   `json_strip_nulls(
+        //     json_build_object(
+        //       'id', observations.id,
+        //       'observation_title', observations.observation_title,
+        //       'observation_notes', observations.observation_notes,
+        //       'experiment_id', observations.experiment_id,
+        //       'date_created', observations.date_created
+        //     )
+        //   ) AS "observations"`
+        // )
         )
       .leftJoin('users', 'experiments.user_id', 'users.id')
       .groupBy('experiments.id', 'users.id')
       .leftJoin('observations', 'experiments.id', 'observations.experiment_id')
-      .groupBy('experiments.id', 'observations.id')
+      // .groupBy('experiments.id', 'observations.id')
       .orderBy('experiments.id', 'asc');
   },
   getExperimentById(db, id) {
@@ -120,13 +120,13 @@ const experimentsService = {
         email: xss(user.email),
         date_created: new Date(user.date_created),
       },
-      observations: {
-        id: observations.id,
-        observation_title: xss(observations.observation_title),
-        observation_notes: xss(observations.observation_notes),
-        experiment_id: observations.experiment_id,
-        date_created: observations.date_created
-      }
+      // observations: {
+      //   id: observations.id,
+      //   observation_title: xss(observations.observation_title),
+      //   observation_notes: xss(observations.observation_notes),
+      //   experiment_id: observations.experiment_id,
+      //   date_created: observations.date_created
+      // }
     }
   }
 };

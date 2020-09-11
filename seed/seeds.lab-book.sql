@@ -1,6 +1,6 @@
 
 INSERT INTO users (first_name, last_name, username, password, email)
-VALUES ('Derick', 'Planter', 'dPlanter', 'strongStuff', 'dplanter@herbz.com');
+VALUES ('Derick', 'Planter', 'dPlanter', '$2a$12$dLzuws.Uc74.rCh1J3jA3OVk1Q3M4HrfTRV1BPejdDyhzMaHbJtSG', 'dplanter@herbz.com');
 
 INSERT INTO experiments (experiment_title, hypothesis, variable_name, user_id)
 VALUES 

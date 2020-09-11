@@ -24,7 +24,7 @@ app.use(cors());
 app.use('/api/experiments', experimentsRouter);
 app.use('/api/experiments', observationsRouter);
 app.use('/api/auth', authRouter)
-// app.use('/api/users', usersRouter)
+app.use('/api/users', usersRouter)
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');

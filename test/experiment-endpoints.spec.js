@@ -162,13 +162,13 @@ describe('EXPERIMENTS endpoints', () => {
             email: 'litany@song.com',
             date_created: '2020-08-25T08:34:13.000Z'
           },
-          observations: {
-            id: 1,
-            observation_title: 'Colony health',
-            observation_notes: "Colony's health is good, bees are active",
-            experiment_id: 2,
-            date_created: '2020-03-20T08:34:13+00:00'
-          }
+          // observations: {
+          //   id: 1,
+          //   observation_title: 'Colony health',
+          //   observation_notes: "Colony's health is good, bees are active",
+          //   experiment_id: 2,
+          //   date_created: '2020-03-20T08:34:13+00:00'
+          // }
         }
         const expectedExperimentId = expectedExperiment.id;
 
