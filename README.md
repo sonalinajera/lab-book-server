@@ -11,7 +11,10 @@ Complete the following steps to start a new project (NEW-PROJECT-NAME):
 3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
 4. Install the node dependencies `npm install`
 5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "lab-book-serve",`
+6. Create a database and test database on your local machine
+7. Run migration scripts and seed tables
+8. User `npm test` to make sure everything is set up
+9. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "lab-book-serve",`
 
 ## Scripts
 
@@ -20,6 +23,10 @@ Start the application `npm start`
 Start nodemon for the application `npm run dev`
 
 Run the tests `npm test`
+
+To create tables `migrate`
+    
+To create test tables `migrate:test`
 
 ## Deploying
 

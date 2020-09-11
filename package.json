@@ -13,6 +13,9 @@
     "deploy": "git push heroku master"
   },
   "keywords": [],
+  "engines": {
+    "node": "v12.18.3"
+  },
   "author": "Sonali Najera",
   "license": "ISC",
   "dependencies": {
