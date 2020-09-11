@@ -79,7 +79,7 @@ describe('OBSERVATION ENDPOINTS', () => {
     });
 
     context('Given an XSS attack observation', () => {
-      beforeEach('Inser users and experiments to database', () => {
+      beforeEach('Insert users and experiments to database', () => {
         return db('users').insert(makeUsersArray())
           .then(() => {
             return db('experiments').insert(makeExperimentsArray());

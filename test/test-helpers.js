@@ -73,7 +73,7 @@ function makeObservationsArray() {
     {
       id: 3,
       observation_title: 'Cleaning leaves',
-      observation_notes: 'Air pollants aggregate on plant surface and decreases plant oxygen production, manually cleaning with cloth not enough',
+      observation_notes: 'Air pollutants aggregate on plant surface and decreases plant oxygen production, manually cleaning with cloth not enough',
       date_created: '2020-05-10T08:34:13.000Z',
       experiment_id: 3
     },
