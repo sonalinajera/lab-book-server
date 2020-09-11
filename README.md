@@ -12,7 +12,7 @@ The form layout is based on the scientific method. Users will use the app to sig
 The server allows for new user sign up, and users to store their experiments and observations. 
 
 ## Technology Stack
-This server-side app was made using the JavaScript, CSS 3, HTML 5. Alongside, this server user Node.js, Express.js and MySQL.
+This server-side app was made using the JavaScript, CSS 3, HTML 5. Alongside, this server used Node.js, Express.js and Postgresql.
 
 ## Clone Set up (optional: not needed to run client side)
 
