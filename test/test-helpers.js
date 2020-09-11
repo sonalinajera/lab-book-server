@@ -54,31 +54,6 @@ function makeExperimentsArray() {
   ];
 }
 
-// function makeVariablesArray() {
-//   return [
-//     {
-//       id: 1,
-//       variable_name: 'surface only vibrations',
-//       experiment_id: 1
-//     },
-//     {
-//       id: 2,
-//       variable_name: 'using Synthecide',
-//       experiment_id: 2
-//     },
-//     {
-//       id: 3,
-//       variable_name: 'manmade vibrations',
-//       experiment_id: 1
-//     },
-//     {
-//       id: 4,
-//       variable_name: 'cleaning leaves',
-//       experiment_id: 3
-//     },
-//   ];
-// }
-
 function makeObservationsArray() {
   return [
     {

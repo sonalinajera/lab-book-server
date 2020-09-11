@@ -5,16 +5,6 @@ const supertest = require('supertest');
 const { makeUsersArray, makeExperimentsArray, makeMaliciousExperimentEntry, makeObservationsArray, makeAuthHeader } = require('./test-helpers');
 const { expect } = require('chai');
 
-//TODO update expect validations to expect data structure below
-// { Experiment Data,
-//   user: {
-//     user data
-//   }
-//   observations: {
-//     observation data
-//   }
-// }
-
 describe('EXPERIMENTS endpoints', () => {
   let db;
 
@@ -65,7 +55,7 @@ describe('EXPERIMENTS endpoints', () => {
             return db('observations').insert(makeObservationsArray());
           });
       });
-      // needs to be for specific users only
+
       it('responds with 200 and all of the experiments', () => {
         const expected = makeExperimentsArray()[0];
         return supertest(app)
@@ -161,14 +151,7 @@ describe('EXPERIMENTS endpoints', () => {
             last_name: 'TheSinger',
             email: 'litany@song.com',
             date_created: '2020-08-25T08:34:13.000Z'
-          },
-          // observations: {
-          //   id: 1,
-          //   observation_title: 'Colony health',
-          //   observation_notes: "Colony's health is good, bees are active",
-          //   experiment_id: 2,
-          //   date_created: '2020-03-20T08:34:13+00:00'
-          // }
+          }
         }
         const expectedExperimentId = expectedExperiment.id;
 
