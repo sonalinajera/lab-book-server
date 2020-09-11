@@ -2,7 +2,19 @@
 
 This is a server that works along with a Lab-book client: 
 
-## Clone Set up (optional)
+Open [live app](http://localhost:3000) to view it in the browser.
+
+## Description 
+This is the server feature of a larger app that will help field researchers track their research and store their field observations.
+
+The form layout is based on the scientific method. Users will use the app to sign up, document, and delete multiple experiment observations.
+
+The server allows for new user sign up, and users to store their experiments and observations. 
+
+## Technology Stack
+This server-side app was made using the JavaScript, CSS 3, HTML 5. Alongside, this server user Node.js, Express.js and MySQL.
+
+## Clone Set up (optional: not needed to run client side)
 
 Complete the following steps to start a new project (NEW-PROJECT-NAME):
 
