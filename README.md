@@ -202,7 +202,7 @@ For user ID 1 with successful login and token generated
  ]
 ```
 
-#### 2. GET Experiments by ID
+#### 2. GET Experiment by ID
 Get details experiments for the User that is currently logged in. 
 
 **URL** `/api/experiments/:experiment_id`
@@ -245,7 +245,77 @@ For user ID 1 with successful login and token generated for experiment id 2.
 
 ```
 
+#### 3. POST Experiment
+Creates experiment for current user that is logged in
 
+**URL** `/api/experiments/`
+
+**METHOD** `POST`
+
+**Auth Required** `Yes`
+
+#### Success Response
+
+**Code**: `201 ok`
+
+**Content**
+location `/api/experiments/3`
+
+ ``` json 
+ [
+    {
+      "id": "3",
+      "experiment_title": "newTitle",
+      "hypothesis": "newHypothesis",
+      "date_created": "2020-08-23T08:34:13.000Z",
+      "variable_name": "newVar",
+      "user_id": "1"
+    }
+ ]
+```
+
+#### Error Response
+
+**Condition 1**: Missing a required field
+
+**Code** : `400 BAD REQUEST`
+
+**Content** : 
+``` json
+{
+  "error": "Missing [SPECIFIC KEY] in request body"
+}
+
+```
+
+
+#### 4. DELETE Experiment
+Deletes experiment for current user that is logged in from database
+
+**URL** `/api/experiments/:experiment_id`
+
+**METHOD** `DELETE`
+
+**Auth Required** `Yes`
+
+#### Success Response
+
+**Code**: `204 ok`
+No content sent back
+
+#### Error Response
+
+**Condition 1**: Experiment at specified ID does not exist
+
+**Code** : `404 NOT FOUND`
+
+**Content** : 
+``` json
+{
+  "error": "Experiment does not exist"
+}
+
+```
 
 
 ## Clone Set up (optional: not needed to run client side)
