@@ -152,6 +152,58 @@ Used to collect a token for a registered User.
 
 ```
 
+
+### Closed Endpoints
+Endpoints that require a valid Token to be included in the header of request. Token generated from successful login. 
+
+
+#### 1. User Experiments
+Get details experiments for the User that is currently logged in. 
+
+**URL** `/api/experiments/`
+
+**METHOD** `GET`
+
+**Auth Required** `Yes`
+
+
+#### Success Response
+
+**Code**: `200 ok`
+
+**Content**
+For user ID 1 with successful login and token generated 
+
+**Without Experiments**
+```json
+{[]}
+```
+
+**With Experiments**
+
+ ``` json 
+ [
+    {
+      "id": "1",
+      "experiment_title": "Title",
+      "hypothesis": "Hypothesis",
+      "date_created": "2020-08-23T08:34:13.000Z",
+      "variable_name": "var",
+      "user_id": "1"
+    },
+    {
+      "id": "2",
+      "experiment_title": "Title",
+      "hypothesis": "Hypothesis",
+      "date_created": "2020-08-23T08:34:13.000Z",
+      "variable_name": "var",
+      "user_id": "1"
+    }
+ ]
+```
+
+
+
 ## Clone Set up (optional: not needed to run client side)
 
 Complete the following steps to start a new project (NEW-PROJECT-NAME):
