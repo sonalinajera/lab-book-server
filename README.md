@@ -19,7 +19,7 @@ This server-side app was made using the JavaScript, CSS 3, HTML 5. Alongside, th
 
 
 ## Endpoints (How to use)
-**For all post endpoints, database creates unique IDs and date in UTC time **
+**For all post endpoints, database creates unique IDs and date in UTC time**
 
 ### Open Endpoints
 Does not require authentication
@@ -33,9 +33,9 @@ Status: 200 OK
 #### Create User
 Used to create a new account for a User. 
 
-** URL ** `/api/users/`
-** METHOD ** `POST`
-** Auth Required ** `No`
+**URL** `/api/users/`
+**METHOD** `POST`
+**Auth Required** `No`
 
 ##### Constraints 
 Must include the following fields in original request 
@@ -52,8 +52,8 @@ Must include the following fields in original request
 
 #### Success Response
 
-** Code **: `200 ok`
-*Content example *
+**Code**: `200 ok`
+**Content example**
  ``` json 
  {
   "id": 1,
@@ -66,29 +66,30 @@ Must include the following fields in original request
 ```
 
 #### Error Response
-** Condition 1 **: Missing a required field if request body 
-** Code ** : `400 BAD REQUEST`
+**Condition 1**: Missing a required field if request body 
+**Code** : `400 BAD REQUEST`
 
-** Content ** : 
+**Content** : 
 ``` json
 {
   "error": "Missing [SPECIFIC FIELD] in request body"
 }
 
 ```
-** Condition 2 **: Password contain spaces in the beginning or end. 
-** Code ** : `400 BAD REQUEST`
+**Condition 2**: Password contain spaces in the beginning or end.
 
-** Content ** : 
+**Code** : `400 BAD REQUEST`
+
+**Content** : 
 ``` json
 {
   "error": "Password must not start or end with empty spaces"
 }
 ```
-** Condition 3 **: Username already exists. 
-** Code ** : `400 BAD REQUEST`
+**Condition 3**: Username already exists. 
+**Code** : `400 BAD REQUEST`
 
-** Content ** : 
+**Content** : 
 ``` json
 {
   "error": "Username already taken"
