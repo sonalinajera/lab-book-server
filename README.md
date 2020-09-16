@@ -470,7 +470,7 @@ location `/api/experiments/2/observations/1`
 
 ```
 
-#### 4. DELETE Observation
+#### 8. DELETE Observation
 Deletes observation for current user that is logged in from database
 
 **URL** `/api/experiments/:experiment_id/observation/:observation_id`
