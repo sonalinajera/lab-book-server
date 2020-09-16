@@ -205,7 +205,7 @@ For user ID 1 with successful login and token generated
 #### 2. GET Experiment by ID
 Get details experiments for the User that is currently logged in. 
 
-**URL** `/api/experiments/:experiment_id`
+**URL** `/api/experiments/:experiment_id/`
 
 **METHOD** `GET`
 
@@ -271,7 +271,7 @@ Must include the following fields in original request
 **Code**: `201 ok`
 
 **Content**
-location `/api/experiments/3`
+location `/api/experiments/3/`
 
  ``` json 
  [
@@ -297,14 +297,12 @@ location `/api/experiments/3`
 {
   "error": "Missing [SPECIFIC KEY] in request body"
 }
-
 ```
-
 
 #### 4. DELETE Experiment
 Deletes experiment for current user that is logged in from database
 
-**URL** `/api/experiments/:experiment_id`
+**URL** `/api/experiments/:experiment_id/`
 
 **METHOD** `DELETE`
 
@@ -332,6 +330,176 @@ No content sent back
 
 ```
 
+#### 5. GET Observations by experiment ID
+Get details of observations for the User that is currently logged in and the current experiment id. 
+
+**URL** `/api/experiments/:experiment_id/observations/`
+
+**METHOD** `GET`
+
+**Auth Required** `Yes`
+
+##### Constraints 
+Must include experiment ID.
+
+#### Success Response
+
+**Code**: `200 ok`
+
+**Content**
+location `/api/experiments/2/observations/`
+
+**Without Observations**
+```json
+{[]}
+```
+
+**With Observations**
+
+ ``` json 
+ [
+    {
+      "id": 1,
+      "observation_title": "Observation title 1",
+      "observation_notes": "Observation Notes 1",
+      "date_created": "2020-03-20T08:34:13.000Z",
+      "experiment_id": "2"
+    },
+     {
+      "id": 2,
+      "observation_title": "Observation title 2",
+      "observation_notes": "Observation Notes 2",
+      "date_created": "2020-03-20T08:34:13.000Z",
+      "experiment_id": "2"
+    },
+  ]
+```
+
+
+#### 6. GET Observation by ID
+Get details of observation for the User that is currently logged in and the current experiment id. 
+
+**URL** `/api/experiments/:experiment_id/observations/:observation_id/`
+
+**METHOD** `GET`
+
+**Auth Required** `Yes`
+
+##### Constraints 
+Must include experiment ID and observation ID.
+
+#### Success Response
+
+**Code**: `200 ok`
+
+**Content**
+location `/api/experiments/2/observations/2/`
+
+**Without Observations**
+```json
+{[]}
+```
+
+**With Observations**
+
+ ``` json 
+ [
+     {
+      "id": 2,
+      "observation_title": "Observation title 2",
+      "observation_notes": "Observation Notes 2",
+      "date_created": "2020-03-20T08:34:13.000Z",
+      "experiment_id": "2"
+    },
+  ]
+```
+
+#### 7. POST Observation
+Get details of observation for the User that is currently logged in and the current experiment id. 
+
+**URL** `/api/experiments/:experiment_id/observations/`
+
+**METHOD** `POST`
+
+**Auth Required** `Yes`
+
+##### Constraints 
+Must include experiment ID.
+
+request body 
+
+```json
+  {
+    "observation_title": "Observation title 1",
+    "observation_notes": "Observation Notes 1", 
+    "experiment_id": "2"
+  }
+```
+
+#### Success Response
+
+**Code**: `201 ok`
+
+**Content**
+location `/api/experiments/2/observations/1`
+
+ 
+ ``` json 
+ [
+     {
+      "id": 1,
+      "observation_title": "Observation title 1",
+      "observation_notes": "Observation Notes 1",
+      "date_created": "2020-03-20T08:34:13.000Z",
+      "experiment_id": "2"
+    },
+  ]
+```
+
+#### Error Response
+
+**Condition 1**: Missing a required field
+
+**Code** : `400 BAD REQUEST`
+
+**Content** : 
+``` json
+{
+  "error": "Missing [SPECIFIC KEY] in request body"
+}
+
+```
+
+#### 4. DELETE Observation
+Deletes observation for current user that is logged in from database
+
+**URL** `/api/experiments/:experiment_id/observation/:observation_id`
+
+**METHOD** `DELETE`
+
+**Auth Required** `Yes`
+
+##### Constraints 
+Must include experiment and observation ID to delete
+
+#### Success Response
+
+**Code**: `204 ok`
+No content sent back
+
+#### Error Response
+
+**Condition 1**: Observation at specified ID does not exist
+
+**Code** : `404 NOT FOUND`
+
+**Content** : 
+``` json
+{
+  "error": "Observation does not exist"
+}
+
+```
 
 ## Clone Set up (optional: not needed to run client side)
 
