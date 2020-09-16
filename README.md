@@ -4,7 +4,10 @@ This is a server that works along with a Lab-book client:
 
 Open [live app](http://localhost:3000) to view it in the browser.
 
-## Description 
+## Summary 
+The API connects client and server for the Lab Book application. The API allows for CRUD operations listed below to be accessed at specific endpoints to create and store Users, Experiments and Observations. The API also handles creating unique ideas for each group of data collected. 
+
+## Description of App Interaction
 This is the server feature of a larger app that will help field researchers track their research and store their field observations.
 
 The form layout is based on the scientific method. Users will use the app to sign up, document, and delete multiple experiment observations.
@@ -13,6 +16,18 @@ The server allows for new user sign up, and users to store their experiments and
 
 ## Technology Stack
 This server-side app was made using the JavaScript, CSS 3, HTML 5. Alongside, this server used Node.js, Express.js and Postgresql.
+
+
+## Endpoints (How to use)
+
+```
+GET /
+```
+
+### Response
+
+Status: 200 OK 
+
 
 ## Clone Set up (optional: not needed to run client side)
 
