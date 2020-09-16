@@ -2,7 +2,7 @@
 
 This is a server that works along with a Lab-book client: 
 
-Open [live app](http://localhost:3000) to view it in the browser.
+Open [live app](https://frozen-lowlands-31689.herokuapp.com/) to view it in the browser.
 
 ## Summary 
 The API connects client and server for the Lab Book application. The API allows for CRUD operations listed below to be accessed at specific endpoints to create and store Users, Experiments and Observations. The API also handles creating unique ideas for each group of data collected. 
@@ -19,14 +19,81 @@ This server-side app was made using the JavaScript, CSS 3, HTML 5. Alongside, th
 
 
 ## Endpoints (How to use)
+**For all post endpoints, database creates unique IDs and date in UTC time **
+
+### Open Endpoints
+Does not require authentication
 
 ```
 GET /
 ```
 
-### Response
-
 Status: 200 OK 
+
+#### Create User
+Used to create a new account for a User. 
+
+** URL ** `/api/users/`
+** METHOD ** `POST`
+** Auth Required ** `No`
+
+##### Constraints 
+Must include the following fields in original request 
+
+``` json
+{
+  "username": "someUsername",
+  "password": "someP@ssword1",
+  "first_name": "someFirstName",
+  "last_name": "someLastName",
+  "email": "someEmail"
+}
+```
+
+#### Success Response
+
+** Code **: `200 ok`
+*Content example *
+ ``` json 
+ {
+  "id": 1,
+  "username": "someUsername",
+  "first_name": "someFirstName",
+  "last_name": "someLastName",
+  "email": "someEmail",
+  "date_created": "2020-08-25T08:34:13.000Z"
+ }
+```
+
+#### Error Response
+** Condition 1 **: Missing a required field if request body 
+** Code ** : `400 BAD REQUEST`
+
+** Content ** : 
+``` json
+{
+  "error": "Missing [SPECIFIC FIELD] in request body"
+}
+
+```
+** Condition 2 **: Password contain spaces in the beginning or end. 
+** Code ** : `400 BAD REQUEST`
+
+** Content ** : 
+``` json
+{
+  "error": "Password must not start or end with empty spaces"
+}
+```
+** Condition 3 **: Username already exists. 
+** Code ** : `400 BAD REQUEST`
+
+** Content ** : 
+``` json
+{
+  "error": "Username already taken"
+}
+```
 
 
 ## Clone Set up (optional: not needed to run client side)
