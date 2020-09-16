@@ -254,6 +254,18 @@ Creates experiment for current user that is logged in
 
 **Auth Required** `Yes`
 
+##### Constraints 
+Must include the following fields in original request 
+
+``` json
+{
+  "experiment_title": "Title",
+  "hypothesis": "Hypothesis",
+  "variable_name": "var",
+  "user_id": "1"
+}
+```
+
 #### Success Response
 
 **Code**: `201 ok`
@@ -297,6 +309,9 @@ Deletes experiment for current user that is logged in from database
 **METHOD** `DELETE`
 
 **Auth Required** `Yes`
+
+##### Constraints 
+Must include experiment id to delete
 
 #### Success Response
 
