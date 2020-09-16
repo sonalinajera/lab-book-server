@@ -24,17 +24,13 @@ This server-side app was made using the JavaScript, CSS 3, HTML 5. Alongside, th
 ### Open Endpoints
 Does not require authentication
 
-```
-GET /
-```
-
-Status: 200 OK 
-
-#### Create User
+#### 1. Create User
 Used to create a new account for a User. 
 
 **URL** `/api/users/`
+
 **METHOD** `POST`
+
 **Auth Required** `No`
 
 ##### Constraints 
@@ -53,7 +49,8 @@ Must include the following fields in original request
 #### Success Response
 
 **Code**: `200 ok`
-**Content example**
+
+**Content**
  ``` json 
  {
   "id": 1,
@@ -66,7 +63,9 @@ Must include the following fields in original request
 ```
 
 #### Error Response
-**Condition 1**: Missing a required field if request body 
+
+**Condition 1**: Missing a required field in request body 
+
 **Code** : `400 BAD REQUEST`
 
 **Content** : 
@@ -87,6 +86,7 @@ Must include the following fields in original request
 }
 ```
 **Condition 3**: Username already exists. 
+
 **Code** : `400 BAD REQUEST`
 
 **Content** : 
@@ -96,6 +96,61 @@ Must include the following fields in original request
 }
 ```
 
+#### 2. Login
+Used to collect a token for a registered User. 
+
+**URL** `/api/login/`
+
+**METHOD** `POST`
+
+**Auth Required** `No`
+
+**Content** : 
+``` json
+{
+  "username": "[valid email address]",
+  "password": "[password in plain text]"
+}
+```
+
+#### Success Response
+
+**Code**: `200 ok`
+
+**Content**
+ ``` json 
+ {
+  "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidXNlcl9pZCI6IjIiLCJpYXQiOjE1MTYyMzkwMjJ9.XSEH_rpQwQ8GKLAr6siB_NemU7MwxYxirSsR-l18VZ4"
+ }
+```
+
+#### Error Response
+
+**Condition 1**: Missing a required key in request body 
+
+**Code** : `400 BAD REQUEST`
+
+**Content** : 
+``` json
+{
+  "error": "Missing [SPECIFIC KEY] in request body"
+}
+
+```
+
+#### Error Response
+
+**Condition 1**: Incorrect Username/Password 
+
+**Code** : `400 BAD REQUEST`
+
+**Content** : 
+``` json
+{
+  "error": "Incorrect username or password"
+}
+
+```
 
 ## Clone Set up (optional: not needed to run client side)
 
