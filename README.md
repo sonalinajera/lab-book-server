@@ -157,7 +157,7 @@ Used to collect a token for a registered User.
 Endpoints that require a valid Token to be included in the header of request. Token generated from successful login. 
 
 
-#### 1. User Experiments
+#### 1. GET Experiments
 Get details experiments for the User that is currently logged in. 
 
 **URL** `/api/experiments/`
@@ -201,6 +201,50 @@ For user ID 1 with successful login and token generated
     }
  ]
 ```
+
+#### 2. GET Experiments by ID
+Get details experiments for the User that is currently logged in. 
+
+**URL** `/api/experiments/:experiment_id`
+
+**METHOD** `GET`
+
+**Auth Required** `Yes`
+
+#### Success Response
+
+**Code**: `200 ok`
+
+**Content**
+For user ID 1 with successful login and token generated for experiment id 2. 
+
+ ``` json 
+ [
+    {
+      "id": "2",
+      "experiment_title": "Title",
+      "hypothesis": "Hypothesis",
+      "date_created": "2020-08-23T08:34:13.000Z",
+      "variable_name": "var",
+      "user_id": "1"
+    }
+ ]
+```
+
+#### Error Response
+
+**Condition 1**: Experiment doesn't exist at that ID 
+
+**Code** : `404 NOT FOUND`
+
+**Content** : 
+``` json
+{
+  "error": "Experiment does not exist"
+}
+
+```
+
 
 
 
